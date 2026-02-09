@@ -1,8 +1,9 @@
 // --- File Input UI ---
 document.getElementById('fileInput').addEventListener('change', function() {
     let count = this.files.length;
-    let text = count > 0 ? `${count} files selected` : "No files chosen";
-    document.getElementById('fileName').textContent = text;
+    let text = count > 0 ? `${count} FILES SELECTED` : "SELECT FILES...";
+    // Keep the prefix + the new text
+    document.getElementById('fileName').innerHTML = `<span style="color: var(--accent); margin-right: 10px;">&gt;</span>${text}`;
 });
 
 // --- Terminal Logic ---
@@ -330,46 +331,92 @@ function updateTelemetry() {
     fetch('/grid_telemetry')
         .then(res => res.json())
         .then(workers => {
-            if(!cpuChart) return;
+            // 1. UPDATE CHART (Existing Logic)
+            if(cpuChart) {
+                const now = new Date().toLocaleTimeString();
+                if (cpuChart.data.labels.length > 20) cpuChart.data.labels.shift();
+                cpuChart.data.labels.push(now);
 
-            const now = new Date().toLocaleTimeString();
-
-            if (cpuChart.data.labels.length > 20) {
-                cpuChart.data.labels.shift();
+                workers.forEach((worker, index) => {
+                    const nodeLabel = worker.node.replace("http://", "").replace("127.0.0.1", "NODE").replace("localhost", "NODE");
+                    let dataset = cpuChart.data.datasets.find(ds => ds.label === nodeLabel);
+                    
+                    if (!dataset) {
+                        const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
+                        const color = colors[index % colors.length];
+                        dataset = {
+                            label: nodeLabel,
+                            borderColor: color,
+                            backgroundColor: color + '20', 
+                            borderWidth: 2,
+                            tension: 0.4, 
+                            fill: true,
+                            pointRadius: 0, 
+                            pointHoverRadius: 4,
+                            data: new Array(cpuChart.data.labels.length - 1).fill(0) 
+                        };
+                        cpuChart.data.datasets.push(dataset);
+                    }
+                    if (dataset.data.length > 20) dataset.data.shift();
+                    dataset.data.push(worker.cpu);
+                });
+                cpuChart.update();
             }
-            cpuChart.data.labels.push(now);
 
-            workers.forEach((worker, index) => {
-                const nodeLabel = worker.node.replace("http://", "").replace("127.0.0.1", "NODE").replace("localhost", "NODE");
-                
-                let dataset = cpuChart.data.datasets.find(ds => ds.label === nodeLabel);
-                
-                if (!dataset) {
-                    const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
-                    const color = colors[index % colors.length];
+            // 2. UPDATE BOTTOM NODE LIST
+            const nodeList = document.getElementById('nodeList');
+            const nodeCount = document.getElementById('activeNodeCount');
+            const avgCpuLabel = document.getElementById('avgClusterCpu');
+            
+            if(nodeList) {
+                nodeList.innerHTML = ""; 
+                let totalCpu = 0;
+                let activeCount = 0;
 
-                    dataset = {
-                        label: nodeLabel,
-                        borderColor: color,
-                        backgroundColor: color + '20', 
-                        borderWidth: 2,
-                        tension: 0.4, 
-                        fill: true,
-                        pointRadius: 0, 
-                        pointHoverRadius: 4,
-                        data: new Array(cpuChart.data.labels.length - 1).fill(0) 
-                    };
-                    cpuChart.data.datasets.push(dataset);
-                }
+                workers.forEach(worker => {
+                    if(worker.status === 'online') {
+                        totalCpu += worker.cpu;
+                        activeCount++;
+                    }
 
-                if (dataset.data.length > 20) {
-                    dataset.data.shift();
-                }
-                
-                dataset.data.push(worker.cpu);
-            });
+                    // Determine OS Icon
+                    let osIcon = '<i class="fa-solid fa-server"></i>'; // Default
+                    const osLower = (worker.os || "").toLowerCase();
+                    if(osLower.includes("win")) osIcon = '<i class="fa-brands fa-windows"></i>';
+                    if(osLower.includes("mac") || osLower.includes("darwin")) osIcon = '<i class="fa-brands fa-apple"></i>';
+                    if(osLower.includes("linux")) osIcon = '<i class="fa-brands fa-linux"></i>';
 
-            cpuChart.update();
+                    // Use Hostname if available, else fall back to IP
+                    let displayName = worker.hostname !== "Unknown" ? worker.hostname : worker.node.replace("http://", "");
+                    
+                    let statusClass = worker.status === 'online' ? 'online' : 'offline';
+                    
+                    const html = `
+                        <div class="node-item ${statusClass}">
+                            <div style="min-width: 120px;">
+                                <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+                                    <span style="font-size:1.1rem; color:var(--text-main);">${osIcon}</span>
+                                    <span class="node-id" style="font-size:0.9rem;">${displayName}</span>
+                                </div>
+                                <div style="font-size:0.7rem; color:#666;">
+                                    ${worker.os} (${worker.arch})
+                                </div>
+                            </div>
+                            
+                            <div class="node-stats" style="flex-direction:column; gap:2px; text-align:right;">
+                                <span>CPU <span class="stat-value" style="color:${worker.cpu > 80 ? '#ef4444' : '#3b82f6'}">${worker.cpu}%</span></span>
+                                <span>RAM <span class="stat-value">${worker.ram}%</span></span>
+                                <span style="font-size:0.65rem; color:#555;">${worker.node}</span>
+                            </div>
+                        </div>
+                    `;
+                    nodeList.insertAdjacentHTML('beforeend', html);
+                });
+
+                nodeCount.textContent = `NODES: ${workers.length}`;
+                let avg = activeCount > 0 ? (totalCpu / activeCount).toFixed(1) : 0;
+                avgCpuLabel.textContent = `AVG LOAD: ${avg}%`;
+            }
         });
 }
 

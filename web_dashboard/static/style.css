@@ -6,7 +6,7 @@
     --text-muted: #a1a1aa;
     
     /* Functional Colors (Not Neon) */
-    --accent: #2563eb;        /* Professional Blue */
+    --accent: #3b82f6;        /* Professional Blue */
     --danger: #be123c;        /* Brick Red */
     --success: #059669;       /* Emerald Green */
     
@@ -63,24 +63,28 @@ body {
 
 /* Layout */
 .container {
-    max-width: 1200px;
+    max-width: 1400px; /* Increased width for 4-col layout */
     margin: 0 auto;
     padding: 2rem;
     width: 100%;
     padding-bottom: 300px; /* Space for terminal */
 }
 
+/* --- UPDATED: 4-Column Grid System --- */
 .grid-layout {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-    gap: 2rem;
+    grid-template-columns: repeat(4, 1fr); /* 4 Equal Columns */
+    gap: 1.5rem;
+    margin-bottom: 2rem;
 }
 
 /* Panels */
 .panel {
     background: var(--bg-panel);
     border: 1px solid var(--border);
-    border-radius: 6px; /* Slightly rounded, almost square */
+    border-radius: 6px; 
+    display: flex;
+    flex-direction: column;
 }
 
 .panel-header {
@@ -105,7 +109,7 @@ body {
     border-radius: 3px;
 }
 
-.panel-body { padding: 1.5rem; }
+.panel-body { padding: 1.5rem; flex-grow: 1; }
 
 .description {
     color: var(--text-muted);
@@ -116,13 +120,18 @@ body {
 /* Forms & Inputs */
 .upload-zone {
     border: 1px dashed var(--border);
-    background: rgba(255,255,255,0.02);
+    /* UPDATED: Darker background to match Password Input */
+    background: rgba(0, 0, 0, 0.3); 
     margin-bottom: 1rem;
     border-radius: 4px;
     transition: 0.2s;
 }
 
-.upload-zone:hover { border-color: var(--text-muted); }
+.upload-zone:hover { 
+    border-color: var(--text-muted); 
+    /* Optional: Slightly lighter on hover to indicate interactivity */
+    background: rgba(0, 0, 0, 0.4);
+}
 
 .upload-btn {
     display: flex;
@@ -131,6 +140,9 @@ body {
     cursor: pointer;
     color: var(--text-muted);
     font-size: 0.9rem;
+    
+    /* UPDATED: Match the password input font */
+    font-family: var(--font-mono); 
 }
 
 .input-wrapper {
@@ -154,27 +166,43 @@ body {
     outline: none;
 }
 
-/* Buttons (Flat, Solid) */
+/* Buttons (Unified Style) */
 .action-btn {
     width: 100%;
     padding: 0.85rem;
-    border: none;
+    border: 1px solid var(--border);
     border-radius: 4px;
     font-weight: 600;
     font-size: 0.85rem;
     cursor: pointer;
     font-family: var(--font-ui);
     letter-spacing: 0.5px;
-    transition: 0.2s;
+    transition: all 0.2s ease;
+    
+    /* DEFAULT STATE: Dark Grey (Like 'Execute Search') */
+    background: #27272a; 
+    color: var(--text-main);
 }
 
-.primary { background: var(--text-main); color: var(--bg-core); }
-.primary:hover { background: #fff; }
+/* HOVER STATE: White (Like 'Initialize Batch') */
+.action-btn:hover {
+    background: #ffffff;
+    color: #09090b; /* Black text */
+    border-color: #ffffff;
+}
 
-.danger { background: #3f3f46; color: var(--text-main); border: 1px solid var(--border); }
-.danger:hover { background: var(--danger); border-color: var(--danger); }
+/* Specific tweaks if needed, but keeping them identical for consistency */
+.primary {
+    /* Optional: Add a subtle blue border to hint at purpose */
+    border-color: #27272a;
+}
 
-/* Results */
+.danger {
+    /* Optional: Add a subtle red border to hint at purpose */
+    border-color: #27272a;
+}
+
+/* Results Area */
 .section-divider {
     border-bottom: 1px solid var(--border);
     margin: 3rem 0 1.5rem 0;
@@ -220,6 +248,66 @@ body {
 
 .worker-id { color: var(--accent); }
 
+/* --- UPDATED: Node Status Vertical Stack --- */
+.node-grid {
+    display: flex;
+    flex-direction: column; /* Vertical Stack */
+    gap: 0.8rem;
+    overflow-y: auto; /* Scrollable */
+    max-height: 220px; /* Match Chart Height */
+    padding-right: 5px;
+}
+
+/* Custom Scrollbar for Node List */
+.node-grid::-webkit-scrollbar {
+    width: 4px;
+}
+.node-grid::-webkit-scrollbar-track {
+    background: transparent;
+}
+.node-grid::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 2px;
+}
+
+.node-item {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--text-muted); 
+    padding: 0.6rem 0.8rem; /* Compact Padding */
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 0.75rem; /* Smaller Font */
+    transition: all 0.2s;
+}
+
+.node-item.online {
+    border-left-color: var(--success);
+    background: rgba(16, 185, 129, 0.05);
+}
+
+.node-item.offline {
+    border-left-color: var(--danger);
+}
+
+.node-id {
+    font-weight: bold;
+    color: var(--text-main);
+}
+
+.node-stats {
+    display: flex;
+    gap: 1rem;
+    color: var(--text-muted);
+}
+
+.stat-value {
+    color: var(--accent);
+}
+
 /* --- Draggable Terminal Window --- */
 .terminal-window {
     position: fixed;
@@ -227,17 +315,15 @@ body {
     right: 20px;
     width: 500px;
     height: 300px;
-    background-color: #09090b; /* Very dark background */
+    background-color: #09090b; 
     border: 1px solid var(--border);
     border-radius: 6px;
     box-shadow: 0 10px 40px rgba(0,0,0,0.6);
     display: flex;
     flex-direction: column;
     z-index: 1000;
-    
-    /* Native CSS Resizing */
     resize: both;
-    overflow: hidden; /* Required for resize handle */
+    overflow: hidden; 
     min-width: 300px;
     min-height: 200px;
     max-width: 90vw;
@@ -251,7 +337,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    cursor: grab; /* Indicates draggable */
+    cursor: grab;
     user-select: none;
 }
 
@@ -292,7 +378,7 @@ body {
 
 .terminal-content {
     flex-grow: 1;
-    overflow-y: auto; /* Scroll inside the content area */
+    overflow-y: auto;
     padding: 10px;
     font-family: var(--font-mono);
     font-size: 0.75rem;
@@ -300,12 +386,10 @@ body {
     background: rgba(0,0,0,0.5);
 }
 
-/* Scrollbar styling for terminal */
 .terminal-content::-webkit-scrollbar { width: 8px; }
 .terminal-content::-webkit-scrollbar-track { background: #09090b; }
 .terminal-content::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
 
-/* Custom Resizer Visual (Bottom Right corner) */
 .resize-handle {
     position: absolute;
     bottom: 0;
@@ -314,10 +398,10 @@ body {
     height: 15px;
     cursor: nwse-resize;
     background: linear-gradient(135deg, transparent 50%, #333 50%);
-    pointer-events: none; /* Let the native resize handle work through it */
+    pointer-events: none;
 }
 
-/* Launcher Button (When minimized) */
+/* Launcher Button */
 .terminal-launcher {
     position: fixed;
     bottom: 20px;

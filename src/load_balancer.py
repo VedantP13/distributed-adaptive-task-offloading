@@ -178,29 +178,31 @@ def print_dashboard():
 
 def get_cluster_status():
     """
-    Returns a list of all workers with their current CPU/RAM usage.
-    Used by the Web Dashboard for live graphing.
+    Returns a list of all workers with their current CPU/RAM usage AND System Info.
     """
     status_report = []
     
-    # Iterate over a copy to avoid modification issues
     for url in WORKER_NODES[:]:
         try:
             worker = xmlrpc.client.ServerProxy(url)
-            # We assume the worker has a get_health() function
             stats = worker.get_health() 
             status_report.append({
                 "node": url,
-                "cpu": stats['cpu'],
-                "ram": stats['ram'],
-                "status": "online"
+                "status": "online",
+                "cpu": stats.get('cpu', 0),
+                "ram": stats.get('ram', 0),
+                # NEW: Capture extra metadata safely
+                "hostname": stats.get('hostname', "Unknown"),
+                "os": stats.get('os', "Unknown"),
+                "arch": stats.get('arch', "?")
             })
         except:
             status_report.append({
                 "node": url,
-                "cpu": 0,
-                "ram": 0,
-                "status": "offline"
+                "status": "offline",
+                "cpu": 0, "ram": 0,
+                "hostname": "Unreachable",
+                "os": "-", "arch": "-"
             })
             
     return status_report

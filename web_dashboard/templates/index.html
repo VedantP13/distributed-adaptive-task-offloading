@@ -1,14 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Compute Grid Controller</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
+
 <body>
 
     <nav class="navbar">
@@ -22,10 +26,10 @@
     </nav>
 
     <main class="container">
-        
+
         <div class="grid-layout">
-            
-            <section class="panel" style="grid-column: 1 / -1;">
+
+            <section class="panel" style="grid-column: span 3;">
                 <div class="panel-header">
                     <h3>Live Cluster Telemetry</h3>
                     <span class="tag mono">REAL_TIME_CPU</span>
@@ -35,7 +39,23 @@
                 </div>
             </section>
 
-            <section class="panel">
+            <section class="panel" style="grid-column: span 1; display: flex; flex-direction: column;">
+                <div class="panel-header" style="flex-direction: column; align-items: flex-start; gap: 5px;">
+                    <h3>Grid Nodes</h3>
+                    <div style="display: flex; justify-content: space-between; width: 100%;">
+                        <span class="tag mono" id="activeNodeCount" style="font-size: 0.7rem;">NODES: 0</span>
+                        <span class="tag mono" id="avgClusterCpu" style="font-size: 0.7rem;">AVG: 0%</span>
+                    </div>
+                </div>
+
+                <div class="panel-body" style="flex-grow: 1; padding-top: 1.5rem; padding-bottom: 1rem;">
+                    <div class="node-grid" id="nodeList">
+                        <div style="color: #666; font-style: italic; padding: 1rem;">Scanning...</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel" style="grid-column: span 2;">
                 <div class="panel-header">
                     <h3>Batch Image Processing</h3>
                     <span class="tag mono">NODE_OP: IMG_BLUR</span>
@@ -46,7 +66,9 @@
                         <div class="upload-zone">
                             <input type="file" id="fileInput" name="files" multiple hidden>
                             <label for="fileInput" class="upload-btn">
-                                <span id="fileName">Select Files...</span>
+                                <span id="fileName">
+                                    <span style="color: var(--accent); margin-right: 10px;">&gt;</span>SELECT FILES...
+                                </span>
                                 <i class="fa-solid fa-folder-open"></i>
                             </label>
                         </div>
@@ -57,7 +79,7 @@
                 </div>
             </section>
 
-            <section class="panel">
+            <section class="panel" style="grid-column: span 2;">
                 <div class="panel-header">
                     <h3>Cryptographic Brute Force</h3>
                     <span class="tag mono">NODE_OP: MD5_CRACK</span>
@@ -67,7 +89,8 @@
                     <form id="crackForm">
                         <div class="input-wrapper">
                             <span class="input-prefix mono">></span>
-                            <input type="text" name="pin" placeholder="ENTER PASSWORD (e.g. 'abc1')" class="mono-input" required>
+                            <input type="text" name="pin" placeholder="ENTER PASSWORD (e.g. 'abc1')" class="mono-input"
+                                required>
                         </div>
                         <button type="submit" class="action-btn danger">
                             EXECUTE SEARCH
@@ -81,9 +104,9 @@
         <div id="resultsTitle" class="section-divider hidden">
             <span class="mono">/// PROCESSED_OUTPUT_STREAM</span>
         </div>
-        
+
         <div id="resultArea" class="results-grid hidden">
-            </div>
+        </div>
 
     </main>
 
@@ -102,11 +125,11 @@
                 </button>
             </div>
         </div>
-        
+
         <div class="terminal-content" id="terminalOutput">
             <div class="log-line"><span class="mono">[SYSTEM]</span> Ready.</div>
         </div>
-        
+
         <div class="resize-handle"></div>
     </div>
 
@@ -116,4 +139,5 @@
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
+
 </html>
