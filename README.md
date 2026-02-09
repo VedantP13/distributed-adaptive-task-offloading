@@ -41,8 +41,8 @@ A robust distributed computing framework that offloads computationally intensive
 
 1. **Clone the Repository:**
    ```bash
-   git clone https://github.com/your-username/your-repo-name.git
-   cd your-repo-name
+   git clone https://github.com/VedantP13/distributed-adaptive-task-offloading.git
+   cd distributed-adaptive-task-offloading
    ```
 
 2. **Install Dependencies:**
