@@ -1,6 +1,6 @@
 import time
 import xmlrpc.client
-import tasks
+import src.old_tasks as old_tasks
 
 # Connect to the Load Balancer
 LOAD_BALANCER_URL = "http://127.0.0.1:9000"
@@ -20,7 +20,7 @@ def run_benchmark():
         # 1. Measure Local Execution Time
         start_local = time.time()
         # We call the logic directly from the tasks module
-        tasks.execute_matrix_multiplication(size)
+        old_tasks.execute_matrix_multiplication(size)
         end_local = time.time()
         local_duration = end_local - start_local
 

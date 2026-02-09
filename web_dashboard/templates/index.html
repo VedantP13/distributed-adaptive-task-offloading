@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compute Grid Controller</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="brand">
+            <span class="mono-logo">DISTRIBUTED_GRID</span>
+        </div>
+        <div class="status-badge" id="statusBadge">
+            <span class="status-dot" id="systemStatus"></span>
+            <span class="status-text mono" id="statusText">CONNECTING...</span>
+        </div>
+    </nav>
+
+    <main class="container">
+        
+        <div class="grid-layout">
+            
+            <section class="panel" style="grid-column: 1 / -1;">
+                <div class="panel-header">
+                    <h3>Live Cluster Telemetry</h3>
+                    <span class="tag mono">REAL_TIME_CPU</span>
+                </div>
+                <div class="panel-body" style="height: 250px;">
+                    <canvas id="cpuChart"></canvas>
+                </div>
+            </section>
+
+            <section class="panel">
+                <div class="panel-header">
+                    <h3>Batch Image Processing</h3>
+                    <span class="tag mono">NODE_OP: IMG_BLUR</span>
+                </div>
+                <div class="panel-body">
+                    <p class="description">Select multiple files to distribute tasks across the cluster.</p>
+                    <form id="imageForm">
+                        <div class="upload-zone">
+                            <input type="file" id="fileInput" name="files" multiple hidden>
+                            <label for="fileInput" class="upload-btn">
+                                <span id="fileName">Select Files...</span>
+                                <i class="fa-solid fa-folder-open"></i>
+                            </label>
+                        </div>
+                        <button type="submit" class="action-btn primary">
+                            INITIALIZE BATCH
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+            <section class="panel">
+                <div class="panel-header">
+                    <h3>Cryptographic Brute Force</h3>
+                    <span class="tag mono">NODE_OP: MD5_CRACK</span>
+                </div>
+                <div class="panel-body">
+                    <p class="description">Parallel search for alphanumeric passwords (a-z, 0-9).</p>
+                    <form id="crackForm">
+                        <div class="input-wrapper">
+                            <span class="input-prefix mono">></span>
+                            <input type="text" name="pin" placeholder="ENTER PASSWORD (e.g. 'abc1')" class="mono-input" required>
+                        </div>
+                        <button type="submit" class="action-btn danger">
+                            EXECUTE SEARCH
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+        </div>
+
+        <div id="resultsTitle" class="section-divider hidden">
+            <span class="mono">/// PROCESSED_OUTPUT_STREAM</span>
+        </div>
+        
+        <div id="resultArea" class="results-grid hidden">
+            </div>
+
+    </main>
+
+    <div class="terminal-window" id="terminalWindow">
+        <div class="terminal-header" id="terminalHeader">
+            <div class="header-left">
+                <i class="fa-solid fa-terminal accent"></i>
+                <span class="mono">SYSTEM_LOGS</span>
+            </div>
+            <div class="header-controls">
+                <button class="control-btn" onclick="clearTerminal()" title="Clear Output">
+                    <i class="fa-solid fa-ban"></i>
+                </button>
+                <button class="control-btn" onclick="toggleTerminal()" title="Minimize">
+                    <i class="fa-solid fa-minus"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="terminal-content" id="terminalOutput">
+            <div class="log-line"><span class="mono">[SYSTEM]</span> Ready.</div>
+        </div>
+        
+        <div class="resize-handle"></div>
+    </div>
+
+    <div class="terminal-launcher hidden" id="terminalLauncher" onclick="toggleTerminal()">
+        <i class="fa-solid fa-terminal"></i>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
