@@ -126,7 +126,7 @@ Verify that the **Live Cluster Telemetry** graph shows two active lines (Node 80
 
 ```
 ├── src/
-│   ├── load_balancer.py      # Central server & task distributor
+│   ├── load_balancer.py       # Central server & task distributor
 │   ├── worker.py              # Worker node logic & health monitoring
 │   └── tasks.py               # Computational tasks (Image/Crack)
 ├── web_dashboard/
